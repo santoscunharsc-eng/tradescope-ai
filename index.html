@@ -12,7 +12,7 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
 
-  <!-- Header / Navbar -->
+  <!-- Header -->
   <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
     <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
       <div class="flex items-center space-x-3">
@@ -28,10 +28,10 @@
     </div>
   </header>
 
-  <!-- Hero & Main Workspace -->
+  <!-- Workspace -->
   <main class="flex-1 max-w-6xl w-full mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
     
-    <!-- Left Column: Input Form -->
+    <!-- Input Form -->
     <div class="space-y-6">
       <div>
         <h1 class="text-2xl font-bold text-white mb-2">Generate Technical Scope of Work</h1>
@@ -73,7 +73,7 @@
       </form>
     </div>
 
-    <!-- Right Column: Output Preview -->
+    <!-- Output Preview -->
     <div class="flex flex-col h-full bg-slate-900/60 border border-slate-800 rounded-2xl p-6 overflow-hidden">
       <div class="flex items-center justify-between pb-4 border-b border-slate-800">
         <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Generated Statement of Work</span>
@@ -112,14 +112,14 @@
         <li class="flex items-center"><span class="text-emerald-400 mr-2">✓</span> Custom Branding & Logo Exports</li>
         <li class="flex items-center"><span class="text-emerald-400 mr-2">✓</span> Commercial Client Acceptance Clauses</li>
       </ul>
-      <a href="https://lemon-squeezy-checkout-link-here" target="_blank" class="block w-full text-center bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 rounded-xl transition text-sm">
+      <a href="https://sualoja.lemonsqueezy.com/checkout" id="lemonLink" target="_blank" class="block w-full text-center bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 rounded-xl transition text-sm">
         Upgrade Now ($19)
       </a>
     </div>
   </div>
 
   <script>
-    function handleGenerate(event) {
+    async function handleGenerate(event) {
       event.preventDefault();
       const brief = document.getElementById('projectBrief').value;
       const type = document.getElementById('projectType').value;
@@ -129,36 +129,28 @@
       const placeholder = document.getElementById('placeholderText');
       const outputContent = document.getElementById('outputContent');
 
-      btnText.textContent = "Processing Scope...";
+      btnText.textContent = "Analyzing & Generating Scope...";
       btnSpinner.classList.remove('hidden');
 
-      setTimeout(() => {
+      try {
+        const res = await fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ brief, type, detail })
+        });
+
+        const data = await res.json();
         btnText.textContent = "Generate Scope of Work";
         btnSpinner.classList.add('hidden');
         placeholder.classList.add('hidden');
         
         outputContent.classList.remove('hidden');
-        outputContent.textContent = `STATEMENT OF WORK (SOW)
-Project Type: ${type}
-Standard: ${detail}
-Date: ${new Date().toLocaleDateString()}
-
-1. PROJECT OVERVIEW
-${brief}
-
-2. SCOPE & DELIVERABLES
-• Demolition and initial site preparation according to municipal code.
-• Millwork & custom structural installation as specified in brief.
-• Quality check and final trim installation.
-
-3. TERMS & PAYMENT SCHEDULE
-• 50% Deposit required prior to material procurement.
-• 40% Due upon delivery of custom components to site.
-• 10% Final holdback due upon project completion.
-
-4. ACCEPTANCE & SIGN-OFF
-Client Signature: ______________________   Date: _________`;
-      }, 1500);
+        outputContent.textContent = data.sow || "Error generating document. Please try again.";
+      } catch (err) {
+        btnText.textContent = "Generate Scope of Work";
+        btnSpinner.classList.add('hidden');
+        alert("Connection error. Check API key status.");
+      }
     }
 
     function openProModal() {
