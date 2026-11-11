@@ -5,6 +5,10 @@ export default async function handler(req, res) {
 
   const { brief, type, detail } = req.body;
 
+  if (!brief) {
+    return res.status(400).json({ error: 'Project brief is required.' });
+  }
+
   if (!process.env.OPENAI_API_KEY) {
     return res.status(500).json({ error: 'API Key missing in Vercel settings.' });
   }
