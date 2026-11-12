@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  // Configura rigorosamente o cabeçalho para aceitar apenas JSON
+  // Garante estritamente que a resposta seja sempre JSON
   res.setHeader('Content-Type', 'application/json');
 
   if (req.method !== 'POST') {
@@ -33,8 +33,8 @@ Output language: English.`;
   const userMessage = `Project Type: ${projectType || 'Custom Millwork'}\nDetail Level: ${detailLevel || 'Standard'}\n\nClient Brief:\n${brief}`;
 
   try {
-    // Usando o modelo gemini-2.5-flash e a rota correta da API v1beta
-    const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+    // Usando exatamente o modelo exigido pela API atualizada: gemini-3.8-flash
+    const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
