@@ -30,7 +30,6 @@ Output language: English.`;
   const userMessage = `Project Type: ${projectType}\nDetail Level: ${detailLevel}\n\nClient Brief:\n${brief}`;
 
   try {
-    // Utilizando o modelo gemini-1.5-flash estável para produção
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: {
