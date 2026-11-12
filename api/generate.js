@@ -29,38 +29,38 @@ Output language: English.`;
 
   const userMessage = `Project Type: ${projectType}\nDetail Level: ${detailLevel}\n\nClient Brief:\n${brief}`;
 
-  try {
-    // Utilizando o modelo gemini-2.5-flash na v1 para estabilidade de produção
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            role: 'user',
-            parts: [
-              { text: systemPrompt + "\n\n" + userMessage }
-            ]
-          }
-        ]
-      })
-    });
+  // Lista de modelos ordenados por prioridade recomendada pela API atual
+  const modelsToTry = ['gemini-3.8-flash', 'gemini-1.5-flash'];
 
-    const data = await response.json();
+  for (const model of modelsToTry) {
+    try {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              role: 'user',
+              parts: [
+                { text: systemPrompt + "\n\n" + userMessage }
+              ]
+            }
+          ]
+        })
+      });
 
-    if (!response.ok) {
-      throw new Error(data.error?.message || `HTTP ${response.status}`);
+      const data = await response.json();
+
+      if (response.ok && data.candidates?.[0]?.content?.parts?.[0]?.text) {
+        return res.status(200).json({ result: data.candidates[0].content.parts[0].text });
+      }
+    } catch (err) {
+      // Tenta o próximo modelo da lista caso ocorra erro ou pico de demanda
+      continue;
     }
-
-    const textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!textResponse) {
-      throw new Error('No valid response received from Gemini API.');
-    }
-
-    return res.status(200).json({ result: textResponse });
-  } catch (err) {
-    return res.status(500).json({ error: err.message });
   }
+
+  return res.status(500).json({ error: 'API temporarily busy or model unavailable. Please try again in a few moments.' });
 }
