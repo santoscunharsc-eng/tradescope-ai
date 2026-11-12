@@ -30,8 +30,8 @@ Output language: English.`;
   const userMessage = `Project Type: ${projectType}\nDetail Level: ${detailLevel}\n\nClient Brief:\n${brief}`;
 
   try {
-    // Usando a rota padrão estável que ignora o bloqueio de novos modelos em alta demanda
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+    // Utilizando o modelo gemini-2.5-flash na v1 para estabilidade de produção
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
