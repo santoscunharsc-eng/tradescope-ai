@@ -29,51 +29,38 @@ Output language: English.`;
 
   const userMessage = `Project Type: ${projectType}\nDetail Level: ${detailLevel}\n\nClient Brief:\n${brief}`;
 
-  // Tentativa com suporte a nova tentativa em caso de pico de demanda
-  const maxRetries = 2;
-  let attempt = 0;
-  let lastError = null;
+  try {
+    // Usando a rota padrão estável que ignora o bloqueio de novos modelos em alta demanda
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        contents: [
+          {
+            role: 'user',
+            parts: [
+              { text: systemPrompt + "\n\n" + userMessage }
+            ]
+          }
+        ]
+      })
+    });
 
-  while (attempt <= maxRetries) {
-    try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              role: 'user',
-              parts: [
-                { text: systemPrompt + "\n\n" + userMessage }
-              ]
-            }
-          ]
-        })
-      });
+    const data = await response.json();
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error?.message || `HTTP ${response.status}`);
-      }
-
-      const textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!textResponse) {
-        throw new Error('No valid response received from Gemini API.');
-      }
-
-      return res.status(200).json({ result: textResponse });
-    } catch (err) {
-      lastError = err;
-      attempt++;
-      if (attempt <= maxRetries) {
-        // Aguarda 1 segundo antes de tentar novamente em caso de pico temporário
-        await new Promise(resolve => setTimeout(resolve, 1000));
-      }
+    if (!response.ok) {
+      throw new Error(data.error?.message || `HTTP ${response.status}`);
     }
-  }
 
-  return res.status(500).json({ error: `API temporarily busy. Please try again in a few seconds. Details: ${lastError.message}` });
+    const textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!textResponse) {
+      throw new Error('No valid response received from Gemini API.');
+    }
+
+    return res.status(200).json({ result: textResponse });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
 }
