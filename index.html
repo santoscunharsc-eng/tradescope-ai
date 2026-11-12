@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TradeScope AI — Instant SOW & Scope Generator</title>
+  <title>TradeScope AI — Neural Clarity & Management</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
@@ -13,16 +13,16 @@
   <header class="border-b border-slate-800 bg-slate-950/50 backdrop-blur sticky top-0 z-50">
     <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="bg-amber-500 text-slate-950 p-2 rounded-lg font-bold text-xl">
-          <i class="fa-solid me-1 fa-ruler-combined"></i> TS
+        <div class="bg-sky-500 text-slate-950 p-2 rounded-lg font-bold text-xl shadow-lg shadow-sky-500/20">
+          <i class="fa-solid fa-compass-drafting"></i> TS
         </div>
         <div>
-          <h1 class="font-bold text-lg leading-none">TradeScope AI</h1>
-          <span class="text-xs text-amber-500 font-semibold tracking-wide">COMMERCIAL SOW ENGINEER</span>
+          <h1 class="font-bold text-lg leading-none tracking-wider">TRADESCOPE AI</h1>
+          <span class="text-[10px] text-sky-400 font-semibold tracking-widest uppercase">Neural Clarity & Management</span>
         </div>
       </div>
       <div class="flex items-center gap-4">
-        <a href="#checkout-modal" onclick="openCheckout()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2 rounded-lg text-sm transition shadow-lg shadow-amber-500/10">
+        <a href="#checkout-modal" onclick="openCheckout()" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold px-4 py-2 rounded-lg text-sm transition shadow-lg shadow-sky-500/20">
           Unlock Unlimited ($19)
         </a>
       </div>
@@ -39,17 +39,17 @@
         <p class="text-xs text-slate-400">Enter project notes to generate a binding Scope of Work.</p>
       </div>
 
-      <!-- OpenAI Key Input -->
+      <!-- Gemini API Key Input -->
       <div>
-        <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">OpenAI API Key</label>
-        <input type="password" id="apiKey" placeholder="sk-..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500" />
-        <span class="text-[10px] text-slate-500 mt-1 block">Key stays securely in your browser.</span>
+        <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Gemini API Key</label>
+        <input type="password" id="apiKey" placeholder="AIzaSy..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-sky-500" />
+        <span class="text-[10px] text-slate-500 mt-1 block">Key stays securely in your browser for testing.</span>
       </div>
 
       <!-- Trade Type -->
       <div>
         <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Trade Category</label>
-        <select id="projectType" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+        <select id="projectType" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-sky-500">
           <option value="Custom Millwork & Cabinetry">Custom Millwork & Cabinetry</option>
           <option value="Residential Carpentry & Framing">Residential Carpentry & Framing</option>
           <option value="Full Kitchen & Interior Remodel">Full Kitchen & Interior Remodel</option>
@@ -60,7 +60,7 @@
       <!-- Detail Level -->
       <div>
         <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Legal Rigor Level</label>
-        <select id="detailLevel" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+        <select id="detailLevel" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-sky-500">
           <option value="Standard Commercial">Standard Commercial (Recommended)</option>
           <option value="High Risk Mitigation">High Risk Mitigation (Strict Exclusions)</option>
           <option value="Detailed Itemized Scope">Detailed Itemized Scope</option>
@@ -70,11 +70,11 @@
       <!-- Client Brief Input -->
       <div class="flex-1 flex flex-col">
         <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Project Brief / Notes</label>
-        <textarea id="brief" placeholder="Example: Kitchen remodel featuring custom Frejó wood accents, Cristalo Duratex cabinetry, Verde São Gabriel granite countertops with built-in dual sink and oven modules. 3-week timeline..." class="w-full flex-1 min-h-[160px] bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-slate-200 focus:outline-none focus:border-amber-500 placeholder-slate-600 resize-none"></textarea>
+        <textarea id="brief" placeholder="Example: Kitchen remodel featuring custom Frejó wood accents, Cristalo Duratex cabinetry, Verde São Gabriel granite countertops with built-in dual sink and oven modules. 3-week timeline..." class="w-full flex-1 min-h-[160px] bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-slate-200 focus:outline-none focus:border-sky-500 placeholder-slate-600 resize-none"></textarea>
       </div>
 
       <!-- Action Button -->
-      <button id="generateBtn" onclick="generateSOW()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-lg text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20">
+      <button id="generateBtn" onclick="generateSOW()" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-3 rounded-lg text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-sky-500/20">
         <i class="fa-solid fa-wand-magic-sparkles"></i>
         <span>Generate Statement of Work</span>
       </button>
@@ -105,23 +105,23 @@
   <!-- Checkout Modal (Lemon Squeezy) -->
   <div id="checkoutModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl">
-      <div class="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center mx-auto text-xl">
+      <div class="w-12 h-12 bg-sky-500/10 text-sky-400 rounded-full flex items-center justify-center mx-auto text-xl">
         <i class="fa-solid fa-bolt"></i>
       </div>
       <h3 class="text-xl font-bold text-slate-100">Unlock Full Access</h3>
       <p class="text-sm text-slate-400">Get lifetime unlimited SOW generation for your trade business.</p>
-      <div class="text-3xl font-extrabold text-amber-500">$19 <span class="text-xs font-normal text-slate-400">USD / one-time</span></div>
-      <a id="lemonLink" href="https://lemon-squeezy-checkout-url-here" target="_blank" class="block w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-xl transition shadow-lg shadow-amber-500/20">
+      <div class="text-3xl font-extrabold text-sky-400">$19 <span class="text-xs font-normal text-slate-400">USD / one-time</span></div>
+      <a id="lemonLink" href="https://lemon-squeezy-checkout-url-here" target="_blank" class="block w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-3 rounded-xl transition shadow-lg shadow-sky-500/20">
         Complete Purchase ($19)
       </a>
-      <button onclick="closeCheckout()" class="text-xs text-slate-500 hover:text-slate-400">Close Window</button>
+      <button onclick="closeCheckout()" class="text-xs text-slate-500 hover:text-slate-400 mt-2 block mx-auto">Close Window</button>
     </div>
   </div>
 
   <script>
-    // Load saved API key from localStorage if available
+    // Load saved Gemini API key from localStorage if available
     document.addEventListener('DOMContentLoaded', () => {
-      const savedKey = localStorage.getItem('ts_openai_key');
+      const savedKey = localStorage.getItem('ts_gemini_key');
       if (savedKey) document.getElementById('apiKey').value = savedKey;
     });
 
@@ -134,7 +134,7 @@
       const btn = document.getElementById('generateBtn');
 
       if (!apiKey) {
-        alert('Please enter your OpenAI API key (sk-...).');
+        alert('Please enter your Gemini API key (AIzaSy...).');
         return;
       }
       if (!brief) {
@@ -143,11 +143,11 @@
       }
 
       // Save key locally for convenience
-      localStorage.setItem('ts_openai_key', apiKey);
+      localStorage.setItem('ts_gemini_key', apiKey);
 
       btn.disabled = true;
       btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> Processing SOW...`;
-      output.innerHTML = `<span class="text-amber-500">Generating commercial-grade Statement of Work...</span>`;
+      output.innerHTML = `<span class="text-sky-400">Generating commercial-grade Statement of Work via Gemini...</span>`;
 
       const systemPrompt = `You are TradeScope AI, an elite construction & cabinetry estimator and legal scope engineer for North American contractors. 
 Your task is to convert raw project notes into a bulletproof, commercial-grade Statement of Work (SOW).
@@ -162,20 +162,24 @@ Enforce the following output structure strictly:
 Tone: Authoritative, highly technical, commercial, clear.
 Output language: English.`;
 
+      const userMessage = `Project Type: ${type}\nDetail Level: ${detail}\n\nClient Brief:\n${brief}`;
+
       try {
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        // Usando o modelo Gemini Flash oficial via REST API
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            model: 'gpt-4o-mini',
-            messages: [
-              { role: 'system', content: systemPrompt },
-              { role: 'user', content: `Project Type: ${type}\nDetail Level: ${detail}\n\nClient Brief:\n${brief}` }
-            ],
-            temperature: 0.3
+            contents: [
+              {
+                role: 'user',
+                parts: [
+                  { text: systemPrompt + "\n\n" + userMessage }
+                ]
+              }
+            ]
           })
         });
 
@@ -185,7 +189,14 @@ Output language: English.`;
           throw new Error(data.error?.message || `HTTP ${response.status}`);
         }
 
-        output.textContent = data.choices[0].message.content;
+        const candidate = data.candidates?.[0];
+        const textResponse = candidate?.content?.parts?.[0]?.text;
+
+        if (!textResponse) {
+          throw new Error('No valid response received from Gemini API.');
+        }
+
+        output.textContent = textResponse;
       } catch (err) {
         output.innerHTML = `<span class="text-red-400">Error: ${err.message}</span>`;
       } finally {
