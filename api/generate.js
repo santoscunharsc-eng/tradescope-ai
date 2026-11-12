@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  // Garante que o cabeçalho de resposta seja sempre JSON
+  // Configura rigorosamente o cabeçalho para aceitar apenas JSON
   res.setHeader('Content-Type', 'application/json');
 
   if (req.method !== 'POST') {
@@ -8,7 +8,7 @@ export default async function handler(req, res) {
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    return res.status(500).json({ error: 'Server API key not configured.' });
+    return res.status(500).json({ error: 'Server API key not configured in Vercel settings.' });
   }
 
   const { projectType, detailLevel, brief } = req.body || {};
@@ -33,7 +33,7 @@ Output language: English.`;
   const userMessage = `Project Type: ${projectType || 'Custom Millwork'}\nDetail Level: ${detailLevel || 'Standard'}\n\nClient Brief:\n${brief}`;
 
   try {
-    // Usando o endpoint correto e estável para a API do Gemini
+    // Usando o modelo gemini-2.5-flash e a rota correta da API v1beta
     const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: {
@@ -54,19 +54,19 @@ Output language: English.`;
     const data = await apiResponse.json();
 
     if (!apiResponse.ok) {
-      const errorMsg = data.error?.message || `API error code ${apiResponse.status}`;
-      return res.status(500).json({ error: errorMsg });
+      const errorMessage = data.error?.message || `API error status ${apiResponse.status}`;
+      return res.status(500).json({ error: errorMessage });
     }
 
     const textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
     
     if (!textResponse) {
-      return res.status(500).json({ error: 'No valid response received from Gemini API structure.' });
+      return res.status(500).json({ error: 'No valid text structure received from Gemini API.' });
     }
 
     return res.status(200).json({ result: textResponse });
 
   } catch (err) {
-    return res.status(500).json({ error: 'Internal server error: ' + err.message });
+    return res.status(500).json({ error: 'Server execution error: ' + err.message });
   }
 }
