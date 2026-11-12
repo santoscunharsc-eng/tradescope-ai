@@ -1,6 +1,7 @@
-import { GoogleGenAI } from '@google/genai';
-
 export default async function handler(req, res) {
+  // Garante que o cabeçalho de resposta seja sempre JSON
+  res.setHeader('Content-Type', 'application/json');
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -10,7 +11,7 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Server API key not configured.' });
   }
 
-  const { projectType, detailLevel, brief } = req.body;
+  const { projectType, detailLevel, brief } = req.body || {};
 
   if (!brief) {
     return res.status(400).json({ error: 'Project brief is required.' });
@@ -29,31 +30,43 @@ Enforce the following output structure strictly:
 Tone: Authoritative, highly technical, commercial, clear.
 Output language: English.`;
 
-  const userMessage = `Project Type: ${projectType}\nDetail Level: ${detailLevel}\n\nClient Brief:\n${brief}`;
+  const userMessage = `Project Type: ${projectType || 'Custom Millwork'}\nDetail Level: ${detailLevel || 'Standard'}\n\nClient Brief:\n${brief}`;
 
   try {
-    const ai = new GoogleGenAI({ apiKey: apiKey });
-    
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: [
-        {
-          role: 'user',
-          parts: [
-            { text: systemPrompt + "\n\n" + userMessage }
-          ]
-        }
-      ]
+    // Usando o endpoint correto e estável para a API do Gemini
+    const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        contents: [
+          {
+            role: 'user',
+            parts: [
+              { text: systemPrompt + "\n\n" + userMessage }
+            ]
+          }
+        ]
+      })
     });
 
-    const textResponse = response.text;
+    const data = await apiResponse.json();
 
+    if (!apiResponse.ok) {
+      const errorMsg = data.error?.message || `API error code ${apiResponse.status}`;
+      return res.status(500).json({ error: errorMsg });
+    }
+
+    const textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    
     if (!textResponse) {
-      throw new Error('No valid response received from Gemini API.');
+      return res.status(500).json({ error: 'No valid response received from Gemini API structure.' });
     }
 
     return res.status(200).json({ result: textResponse });
+
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: 'Internal server error: ' + err.message });
   }
 }
