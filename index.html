@@ -1,72 +1,187 @@
-export default async function handler(req, res) {
-  // Ensure strict JSON header response
-  res.setHeader('Content-Type', 'application/json');
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeScope AI — Neural Clarity & Management</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#0a0d14',
+                        cardbg: '#121824',
+                        accent: '#06b6d4',
+                        accenthover: '#0891b2'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-darkbg text-gray-100 min-h-screen flex flex-col font-sans selection:bg-accent selection:text-black">
 
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+    <!-- Header / Navigation -->
+    <header class="border-b border-gray-800 bg-cardbg/50 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <!-- Logotipo Bússola Náutica em Alta Definição -->
+                <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-cyan-600 to-blue-500 flex items-center justify-center shadow-lg shadow-cyan-500/20 border border-cyan-400/30">
+                    <i class="fa-solid fa-compass text-white text-xl animate-spin-slow"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg tracking-wider text-white flex items-center gap-2">
+                        TRADESCOPE AI <span class="text-xs px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">PRO</span>
+                    </h1>
+                    <p class="text-xs text-gray-400 font-medium tracking-wide">NEURAL CLARITY & MANAGEMENT</p>
+                </div>
+            </div>
+            <div>
+                <a href="https://lemonsqueezy.com" target="_blank" class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold text-sm shadow-md shadow-cyan-500/10 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-bolt text-xs"></i> Activate Unlimited ($19 USD)
+                </a>
+            </div>
+        </div>
+    </header>
 
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    return res.status(500).json({ error: 'Server API key not configured in Vercel environment.' });
-  }
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Left Panel: Input & Controls -->
+        <section class="lg:col-span-5 bg-cardbg border border-gray-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+            <div class="space-y-5">
+                <div class="flex items-center justify-between border-b border-gray-800 pb-4">
+                    <h2 class="text-base font-semibold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-accent"></i> Project Parameters
+                    </h2>
+                    <span class="text-xs text-gray-400">AI-Powered Estimator</span>
+                </div>
 
-  const { projectType, detailLevel, brief } = req.body || {};
+                <!-- Project Type Selector -->
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Project Type</label>
+                    <select id="projectType" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none focus:border-accent transition-colors">
+                        <option value="Custom Millwork & Cabinetry">Custom Millwork & Cabinetry</option>
+                        <option value="Residential Kitchen Remodel">Residential Kitchen Remodel</option>
+                        <option value="Architectural Millwork & Built-ins">Architectural Millwork & Built-ins</option>
+                        <option value="Commercial Interior Joinery">Commercial Interior Joinery</option>
+                    </select>
+                </div>
 
-  if (!brief) {
-    return res.status(400).json({ error: 'Project brief is required.' });
-  }
+                <!-- Detail Level -->
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Detail Level</label>
+                    <select id="detailLevel" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none focus:border-accent transition-colors">
+                        <option value="Standard Professional">Standard Professional SOW</option>
+                        <option value="Comprehensive Commercial">Comprehensive Commercial SOW</option>
+                        <option value="Executive Engineering Scope">Executive Engineering Scope</option>
+                    </select>
+                </div>
 
-  const systemPrompt = `You are TradeScope AI, an elite construction & cabinetry estimator and legal scope engineer for North American contractors. 
-Your task is to convert raw project notes into a bulletproof, commercial-grade Statement of Work (SOW).
+                <!-- Project Brief Notes -->
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-xs font-semibold uppercase tracking-wider text-gray-400">Project Brief / Notes</label>
+                        <button onclick="fillSample()" class="text-xs text-cyan-400 hover:text-cyan-300 transition-colors flex items-center gap-1">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Insert Sample
+                        </button>
+                    </div>
+                    <textarea id="briefInput" rows="6" placeholder="Enter specifications (e.g., Kitchen remodel featuring custom Frejó wood accents, Cristalo Duratex cabinetry, Verde São Gabriel granite countertops...)" class="w-full bg-gray-900 border border-gray-800 rounded-xl p-4 text-sm text-gray-200 focus:outline-none focus:border-accent transition-colors resize-none"></textarea>
+                </div>
+            </div>
 
-Enforce the following output structure strictly:
-1. PROJECT OVERVIEW & GOALS
-2. SPECIFIC SCOPE OF WORK & INCLUSIONS (Categorized by Carpentry, Materials, Prep, and Finish)
-3. EXCLUSIONS & CLIENT RESPONSIBILITIES (Crucial for risk mitigation)
-4. PROJECT TIMELINE & PAYMENT SCHEDULE (Standard terms: 50% Deposit, 40% Delivery, 10% Final Sign-off)
-5. FORMAL ACCEPTANCE & SIGNATURE BLOCK
+            <!-- Action Button -->
+            <div class="mt-6 pt-4 border-t border-gray-800">
+                <button id="generateBtn" onclick="generateSOW()" class="w-full py-4 rounded-xl bg-accent hover:bg-accenthover text-black font-bold text-sm tracking-wide shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-brain"></i> Generate Statement of Work
+                </button>
+            </div>
+        </section>
 
-Tone: Authoritative, highly technical, commercial, clear.
-Output language: English.`;
+        <!-- Right Panel: Output Document Preview -->
+        <section class="lg:col-span-7 bg-cardbg border border-gray-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between min-h-[600px]">
+            <div class="flex items-center justify-between border-b border-gray-800 pb-4 mb-6">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-file-contract text-accent"></i>
+                    <h2 class="text-base font-semibold text-white">Generated Proposal & SOW</h2>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="copyOutput()" class="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs font-medium text-gray-300 transition-colors flex items-center gap-1.5">
+                        <i class="fa-regular fa-copy"></i> Copy
+                    </button>
+                </div>
+            </div>
 
-  const userMessage = `Project Type: ${projectType || 'Custom Millwork'}\nDetail Level: ${detailLevel || 'Standard'}\n\nClient Brief:\n${brief}`;
+            <!-- Output Screen Area -->
+            <div id="outputContainer" class="flex-grow bg-gray-900/60 border border-gray-800/80 rounded-xl p-6 overflow-y-auto max-h-[650px] font-mono text-sm text-gray-300 whitespace-pre-wrap leading-relaxed">
+// TradeScope AI Engine initialized...
+// Ready to compile North American commercial SOW assets.
+// Fill in your project briefing on the left and click "Generate Statement of Work".
+            </div>
 
-  try {
-    // Calling Gemini API with production stability
-    const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            role: 'user',
-            parts: [
-              { text: systemPrompt + "\n\n" + userMessage }
-            ]
-          }
-        ]
-      })
-    });
+            <!-- Footer Status / Notice -->
+            <div class="mt-6 pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-500">
+                <span>Secured by Google Gemini Engine</span>
+                <span class="text-cyan-500 font-medium">TradeScope AI v2.5 Production</span>
+            </div>
+        </section>
 
-    const data = await apiResponse.json();
+    </main>
 
-    if (!apiResponse.ok) {
-      const errorMessage = data.error?.message || `API error status ${apiResponse.status}`;
-      return res.status(500).json({ error: errorMessage });
-    }
+    <!-- Client-side JavaScript -->
+    <script>
+        function fillSample() {
+            document.getElementById('briefInput').value = "Kitchen remodel featuring custom Frejó wood accents, Cristalo Duratex cabinetry, Verde São Gabriel granite countertops with built-in dual sink and oven modules. 3-week timeline and strict site protection protocols.";
+        }
 
-    const textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    
-    if (!textResponse) {
-      return res.status(500).json({ error: 'No valid text structure received from Gemini API.' });
-    }
+        async function generateSOW() {
+            const btn = document.getElementById('generateBtn');
+            const output = document.getElementById('outputContainer');
+            const brief = document.getElementById('briefInput').value.trim();
+            const projectType = document.getElementById('projectType').value;
+            const detailLevel = document.getElementById('detailLevel').value;
 
-    return res.status(200).json({ result: textResponse });
+            if (!brief) {
+                alert('Please enter a project brief first.');
+                return;
+            }
 
-  } catch (err) {
-    return res.status(500).json({ error: 'Server execution error: ' + err.message });
-  }
-}
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Generating SOW Asset...`;
+            output.textContent = "Processing neural engineering scope & estimating parameters...\nPlease wait.";
+
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ projectType, detailLevel, brief })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Server error occurred.');
+                }
+
+                output.textContent = data.result;
+            } catch (err) {
+                output.textContent = `[ERROR]: ${err.message}`;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-brain"></i> Generate Statement of Work`;
+            }
+        }
+
+        function copyOutput() {
+            const text = document.getElementById('outputContainer').textContent;
+            navigator.clipboard.writeText(text);
+            alert('SOW copied to clipboard successfully!');
+        }
+    </script>
+</body>
+</html>
