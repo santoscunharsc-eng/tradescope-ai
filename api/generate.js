@@ -50,3 +50,23 @@ Output language: English.`;
         ]
       })
     });
+
+    const data = await apiResponse.json();
+
+    if (!apiResponse.ok) {
+      const errorMessage = data.error?.message || `API error status ${apiResponse.status}`;
+      return res.status(500).json({ error: errorMessage });
+    }
+
+    const textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    
+    if (!textResponse) {
+      return res.status(500).json({ error: 'No valid text structure received from Gemini API.' });
+    }
+
+    return res.status(200).json({ result: textResponse });
+
+  } catch (err) {
+    return res.status(500).json({ error: 'Server execution error: ' + err.message });
+  }
+}
