@@ -1,39 +1,39 @@
 export default async function handler(req, res) {
-  // Ensure strict JSON header response
+  // Garante uma resposta com cabeçalho JSON estrito
   res.setHeader('Content-Type', 'application/json');
 
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ error: 'Método não permitido' });
   }
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    return res.status(500).json({ error: 'Server API key not configured in Vercel environment.' });
+    return res.status(500).json({ error: 'A chave da API do servidor não está configurada no ambiente Vercel.' });
   }
 
   const { projectType, detailLevel, brief } = req.body || {};
 
   if (!brief) {
-    return res.status(400).json({ error: 'Project brief is required.' });
+    return res.status(400).json({ error: 'Um briefing do projeto é obrigatório.' });
   }
 
-  const systemPrompt = `You are TradeScope AI, an elite construction & cabinetry estimator and legal scope engineer for North American contractors. 
-Your task is to convert raw project notes into a bulletproof, commercial-grade Statement of Work (SOW).
+  const systemPrompt = `Você é a TradeScope AI, uma empresa de elite em estimativa de construção e marcenaria, além de engenharia de escopo legal para empreiteiras norte-americanas. 
+Sua tarefa é converter anotações brutas do projeto em uma Declaração de Trabalho (SOW) impecável e de nível comercial.
 
-Enforce the following output structure strictly:
-1. PROJECT OVERVIEW & GOALS
-2. SPECIFIC SCOPE OF WORK & INCLUSIONS (Categorized by Carpentry, Materials, Prep, and Finish)
-3. EXCLUSIONS & CLIENT RESPONSIBILITIES (Crucial for risk mitigation)
-4. PROJECT TIMELINE & PAYMENT SCHEDULE (Standard terms: 50% Deposit, 40% Delivery, 10% Final Sign-off)
-5. FORMAL ACCEPTANCE & SIGNATURE BLOCK
+Siga rigorosamente a seguinte estrutura de saída:
+1. VISÃO GERAL E OBJETIVOS DO PROJETO
+2. ESCOPO DE TRABALHO ESPECÍFICO E INCLUSÕES (Categorizado por Carpintaria, Materiais, Preparação e Acabamento)
+3. EXCLUSÕES E RESPONSABILIDADES DO CLIENTE (Cruciais para mitigação de riscos)
+4. CRONOGRAMA DO PROJETO E PLANO DE PAGAMENTO (Condições padrão: 50% de Depósito, 40% na Entrega, 10% na Aprovação Final)
+5. ACEITAÇÃO FORMAL E BLOCO DE ASSINATURA
 
-Tone: Authoritative, highly technical, commercial, clear.
-Output language: English.`;
+Tom: Autoritário, altamente técnico, comercial e claro.
+Idioma de saída: Inglês.`;
 
-  const userMessage = `Project Type: ${projectType || 'Custom Millwork'}\nDetail Level: ${detailLevel || 'Standard'}\n\nClient Brief:\n${brief}`;
+  const userMessage = `Tipo de Projeto: ${projectType || 'Custom Millwork'}\nNível de Detalhe: ${detailLevel || 'Standard'}\n\nResumo do Cliente:\n${brief}`;
 
   try {
-    // Calling Gemini API with production stability
+    // Chamando a API Gemini com estabilidade de produção
     const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: {
@@ -54,19 +54,19 @@ Output language: English.`;
     const data = await apiResponse.json();
 
     if (!apiResponse.ok) {
-      const errorMessage = data.error?.message || `API error status ${apiResponse.status}`;
+      const errorMessage = data.error?.message || `Status de erro da API ${apiResponse.status}`;
       return res.status(500).json({ error: errorMessage });
     }
 
     const textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
     
     if (!textResponse) {
-      return res.status(500).json({ error: 'No valid text structure received from Gemini API.' });
+      return res.status(500).json({ error: 'Nenhuma estrutura de texto válida recebida da API Gemini.' });
     }
 
     return res.status(200).json({ result: textResponse });
 
   } catch (err) {
-    return res.status(500).json({ error: 'Server execution error: ' + err.message });
+    return res.status(500).json({ error: 'Erro de execução do servidor: ' + err.message });
   }
 }
