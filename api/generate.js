@@ -33,8 +33,8 @@ Idioma de saída: Inglês.`;
   const userMessage = `Tipo de Projeto: ${projectType || 'Custom Millwork'}\nNível de Detalhe: ${detailLevel || 'Standard'}\n\nResumo do Cliente:\n${brief}`;
 
   try {
-    // Atualizado para o modelo exigido pela API atualizada
-    const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+    // Utilizando o modelo oficial exigido: gemini-3.8-flash
+    const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
