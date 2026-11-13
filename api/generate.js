@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  // Garante estritamente que a resposta seja sempre JSON
+  // Ensure strict JSON header response
   res.setHeader('Content-Type', 'application/json');
 
   if (req.method !== 'POST') {
@@ -8,7 +8,7 @@ export default async function handler(req, res) {
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    return res.status(500).json({ error: 'Server API key not configured in Vercel settings.' });
+    return res.status(500).json({ error: 'Server API key not configured in Vercel environment.' });
   }
 
   const { projectType, detailLevel, brief } = req.body || {};
@@ -33,8 +33,8 @@ Output language: English.`;
   const userMessage = `Project Type: ${projectType || 'Custom Millwork'}\nDetail Level: ${detailLevel || 'Standard'}\n\nClient Brief:\n${brief}`;
 
   try {
-    // Usando exatamente o modelo exigido pela API atualizada: gemini-3.8-flash
-    const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`, {
+    // Calling Gemini API with production stability
+    const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -50,23 +50,3 @@ Output language: English.`;
         ]
       })
     });
-
-    const data = await apiResponse.json();
-
-    if (!apiResponse.ok) {
-      const errorMessage = data.error?.message || `API error status ${apiResponse.status}`;
-      return res.status(500).json({ error: errorMessage });
-    }
-
-    const textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    
-    if (!textResponse) {
-      return res.status(500).json({ error: 'No valid text structure received from Gemini API.' });
-    }
-
-    return res.status(200).json({ result: textResponse });
-
-  } catch (err) {
-    return res.status(500).json({ error: 'Server execution error: ' + err.message });
-  }
-}
